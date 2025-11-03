@@ -242,7 +242,6 @@ async def generate_media(request: GenerationRequest):
     print(f"取得した天気: {weather_main} ({weather_desc}), 気温: {temperature}℃")
 
     # (b) AI用のプロンプトを生成
-    # ここは工夫のしどころです！
     music_prompt = f"{weather_main}, {weather_desc}, {request.text_prompt}, cinematic music"
     image_prompt = f"A beautiful cinematic scene of {request.city} during {weather_main}, {request.text_prompt}, photorealistic, 4k"
 
@@ -279,6 +278,5 @@ if __name__ == "__main__":
     os.makedirs("static/music", exist_ok=True)
     os.makedirs("static/images", exist_ok=True)
     os.makedirs("static/video", exist_ok=True)
-    # TODO: ダミーの音楽ファイルと画像を配置しておくとテストが楽です
     
     uvicorn.run(app, host="127.0.0.1", port=8000)
