@@ -1,0 +1,10 @@
+# staticフォルダ内のAI生成結果を無視する
+
+# MusicGenが生成する音楽ファイル
+static/music/generated_music.wav
+
+# Stable Diffusionが生成する画像ファイル
+static/images/generated_image_*.png
+
+# MoviePyが生成する動画ファイル
+static/video/final_video.mp4
