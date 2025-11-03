@@ -1,0 +1,23 @@
+# ライブラリ
+# Webサーバー
+fastapi
+uvicorn
+
+# 天気API
+requests
+
+# AI (音楽)
+transformers
+scipy
+
+# AI (画像)
+diffusers
+torch
+pillow
+
+# 動画
+moviepy
+
+# AIモデルの高速化・読み込み
+accelerate
+safetensors

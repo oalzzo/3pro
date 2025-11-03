@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AItmosphere</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        #results { margin-top: 20px; }
+        #images img { max-width: 200px; margin: 5px; border: 1px solid #ccc; }
+        #video-player { width: 100%; max-width: 600px; margin-top: 10px; border: 1px solid #ccc;}
+        #loading { display: none; }
+    </style>
+</head>
+<body>
+    <h2>AItmosphere 🎵🎨</h2>
+    <form id="generation-form">
+        <label for="city">都市名 (例: Tokyo):</label>
+        <input type="text" id="city" value="Tokyo" required>
+        <br><br>
+        <label for="text_prompt">追加テキスト (例: 静かな夜):</label>
+        <input type="text" id="text_prompt" value="静かな夜" required>
+        <br><br>
+        <button type="submit">生成スタート！</button>
+    </form>
+
+    <div id="loading">生成中です...（モデルの起動には数分かかることがあります）</div>
+
+    <div id="results">
+        <h3>生成結果</h3>
+        <p id="weather-info"></p>
+
+        <h4>🎵 音楽</h4>
+        <audio id="music-player" controls></audio>
+
+        <h4>🎨 画像</h4>
+        <div id="images"></div>
+
+        <h4>🎬 動画</h4>
+        <video id="video-player" controls loop></video>
+    </div>
+
+    <script>
+        document.getElementById("generation-form").addEventListener("submit", async function(e) {
+            e.preventDefault(); // フォームのデフォルト送信をキャンセル
+            
+            const city = document.getElementById("city").value;
+            const text_prompt = document.getElementById("text_prompt").value;
+
+            document.getElementById("loading").style.display = "block";
+            document.getElementById("results").style.display = "none";
+
+            try {
+                const response = await fetch("/generate", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        city: city,
+                        text_prompt: text_prompt
+                    }),
+                });
+
+                if (!response.ok) {
+                    throw new Error("サーバーエラーが発生しました。");
+                }
+
+                const data = await response.json();
+
+                // 結果を表示
+                document.getElementById("weather-info").textContent = data.weather_info;
+                document.getElementById("music-player").src = data.music_url;
+                
+                const videoPlayer = document.getElementById("video-player");
+                videoPlayer.src = data.video_url;
+                videoPlayer.load(); // 新しいソースを読み込む
+
+                const imagesContainer = document.getElementById("images");
+                imagesContainer.innerHTML = ""; // 前回の結果をクリア
+                data.image_urls.forEach(url => {
+                    const img = document.createElement("img");
+                    img.src = url;
+                    imagesContainer.appendChild(img);
+                });
+
+                document.getElementById("results").style.display = "block";
+
+            } catch (error) {
+                console.error("エラー:", error);
+                alert("エラーが発生しました: " + error.message);
+            } finally {
+                document.getElementById("loading").style.display = "none";
+            }
+        });
+    </script>
+
+</body>
+
+</html>
